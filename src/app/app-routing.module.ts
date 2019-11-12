@@ -1,11 +1,26 @@
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 
+export interface RouteData {
+  labelKey: string;
+  labelDescriptionKey: string;
+}
 
-const routes: Routes = [];
+export type RoutesWithData = Routes & { data?: RouteData };
+
+export const routes: RoutesWithData = [
+  {
+    path: '',
+    loadChildren: () => import('projects/memory-game/src/lib/memory-game.module').then(m => m.MemoryGameModule),
+    data: {
+      labelKey: 'Memory Game',
+      labelDescriptionKey: 'Memory Game'
+    }
+  }
+];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

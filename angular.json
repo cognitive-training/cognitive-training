@@ -26,9 +26,16 @@
             "aot": true,
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              {
+                "glob": "**/*",
+                "input": "projects/memory-game/src/assets",
+                "output": "./assets/"
+              }
             ],
             "styles": [
+              "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
+              "./node_modules/basscss/css/basscss.css",
               "src/styles.scss"
             ],
             "scripts": []
@@ -68,7 +75,8 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "cognitive-training:build"
+            "browserTarget": "cognitive-training:build",
+            "port": 5050
           },
           "configurations": {
             "production": {
@@ -83,6 +91,37 @@
           }
         }
       }
-    }},
+    },
+    "memory-game": {
+      "projectType": "library",
+      "root": "projects/memory-game",
+      "sourceRoot": "projects/memory-game/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-ng-packagr:build",
+          "options": {
+            "tsConfig": "projects/memory-game/tsconfig.lib.json",
+            "project": "projects/memory-game/ng-package.json"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/memory-game/src/test.ts",
+            "tsConfig": "projects/memory-game/tsconfig.spec.json",
+            "karmaConfig": "projects/memory-game/karma.conf.js"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": ["projects/memory-game/tsconfig.lib.json", "projects/memory-game/tsconfig.spec.json"],
+            "exclude": ["**/node_modules/**"]
+          }
+        }
+      }
+    }
+  },
   "defaultProject": "cognitive-training"
 }
