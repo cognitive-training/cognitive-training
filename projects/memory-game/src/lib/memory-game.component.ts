@@ -1,69 +1,125 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { ICard, MemoryGameService } from './memory-game.service';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { combineLatest } from 'rxjs';
+import { distinctUntilChanged, map, pluck } from 'rxjs/operators';
 import { MatDialog } from '@angular/material';
 import { MemoryGameWinDialogComponent } from './win-dialog/memory-game-win-dialog.component';
 
 const difficultyToCols = {
-  1: 2,
-  2: 4,
-  3: 3,
-  4: 4,
-  5: 5,
-  6: 5,
-  7: 5,
-  8: 6,
-  9: 6,
-  10: 6
+	1: 2,
+	2: 2,
+	3: 3,
+	4: 3,
+	5: 4,
+	6: 4,
+	7: 4,
+	8: 4,
+	9: 5,
+	10: 5
 };
 
 @Component({
-  selector: 'lib-memory-game',
-  template: `
-    <mat-card>
-      <div class="flex flex-auto justify-between">
-        <div class="mat-h1">Memory Game</div>
-        <div class="mat-h1">Coups: {{ nbTries$ | async }}</div>
-        <div class="mat-h1" *ngIf="resolvedPairList$ | async as resolvedPairList">
-          Paires trouvées: {{ resolvedPairList.length }} / {{ difficulty$ | async }}
-        </div>
-        <button mat-raised-button color="primary" [routerLink]="['..']">Retour au menu</button>
-      </div>
-    </mat-card>
-    <mat-divider></mat-divider>
-    <div class="flex flex-wrap p1 justify-center">
-      <div *ngFor="let card of cards$ | async; trackBy: trackByCards" style="width: 200px; height: 200px">
-        <app-card [card]="card" (flipped)="flipCard($event)"></app-card>
-      </div>
-    </div>
-  `,
-  providers: [MemoryGameService]
+	selector: 'lib-memory-game',
+	template: `
+		<mat-card>
+			<div class="flex flex-auto justify-between items-center">
+				<div class="h3"><label class="xs-hide">Coups: </label>{{ nbTries$ | async }}</div>
+				<div class="h3" *ngIf="resolvedPairList$ | async as resolvedPairList">
+					<label class="xs-hide">Paires trouvées: </label>{{ resolvedPairList.length }} /
+					{{ difficulty$ | async }}
+				</div>
+				<button mat-raised-button color="primary" class="h3" [routerLink]="['..']">Retour</button>
+			</div>
+		</mat-card>
+		<div class="game-container p1 justify-center">
+			<div class="grid-container" [ngStyle]="gridStyle$ | async">
+				<div *ngFor="let card of cards$ | async; trackBy: trackByCards" class="grid-item">
+					<app-card [card]="card" (flipped)="flipCard($event)"></app-card>
+				</div>
+			</div>
+		</div>
+	`,
+	providers: [MemoryGameService],
+	styles: [
+		`
+			:host {
+				height: 100%;
+				display: block;
+			}
+			.grid-item {
+				height: 100%;
+				width: 100%;
+			}
+			.game-container {
+				height: 100%;
+				display: flex;
+				align-items: center;
+				box-sizing: border-box;
+			}
+			.grid-container {
+				display: grid;
+				justify-content: center;
+				margin: 0 auto;
+			}
+		`
+	]
 })
 export class MemoryGameComponent implements OnInit, OnDestroy {
-  difficultyToCols = difficultyToCols;
-  cards$ = this.memoryGame.cards$;
-  resolvedPairList$ = this.memoryGame.resolvedPairList$;
-  nbTries$ = this.memoryGame.nbTries$;
-  difficulty$ = this.memoryGame.difficulty$;
+	cards$ = this.memoryGame.cards$;
+	resolvedPairList$ = this.memoryGame.resolvedPairList$;
+	nbTries$ = this.memoryGame.nbTries$;
+	difficulty$ = this.memoryGame.difficulty$;
 
-  constructor(private memoryGame: MemoryGameService, public dialog: MatDialog) {}
+	isXs$ = this.breakpointObserver.observe([Breakpoints.XSmall]).pipe(
+		pluck('matches'),
+		distinctUntilChanged()
+	);
 
-  trackByCards(index: number, card: ICard) {
-    return card.id;
-  }
+	gridStyle$ = combineLatest([this.isXs$, this.difficulty$]).pipe(
+		map(([isXs, difficulty]) => {
+			const nbCols = difficultyToCols[difficulty] || 7;
+			// let nbRows = Math.ceil((difficulty * 2) / nbCols);
+			// if (isXs) {
+			// 	nbCols = Math.ceil(nbCols / 2);
+			// }
+			// console.log(nbCols);
+			return { 'grid-template': `repeat(${nbCols}, minmax(0, 1fr)) / repeat(${nbCols}, minmax(0, 1fr))` };
+		})
+	);
 
-  flipCard(card: ICard) {
-    this.memoryGame.selectCard(card);
-  }
+	constructor(
+		private memoryGame: MemoryGameService,
+		public dialog: MatDialog,
+		private elRef: ElementRef,
+		private breakpointObserver: BreakpointObserver
+	) {}
 
-  ngOnDestroy(): void {
-    console.log('destroy');
-  }
+	trackByCards(index: number, card: ICard) {
+		return card.id;
+	}
 
-  ngOnInit(): void {
-    this.memoryGame.win$.subscribe(([, nbTries]) => {
-      this.dialog.open(MemoryGameWinDialogComponent, {
-        data: { difficulty$: this.memoryGame.difficulty$, nbTries }
-      });
-    });
-  }
+	flipCard(card: ICard) {
+		this.memoryGame.selectCard(card);
+	}
+
+	ngOnDestroy(): void {
+		console.log('destroy');
+	}
+
+	ngOnInit(): void {
+		this.memoryGame.win$.subscribe(([, nbTries]) => {
+			this.dialog.open(MemoryGameWinDialogComponent, {
+				data: { difficulty$: this.memoryGame.difficulty$, nbTries }
+			});
+		});
+		this.onResize({ target: { innerWidth: this.elRef.nativeElement.clientWidth } });
+	}
+
+	@HostListener('window:resize', ['$event'])
+	onResize(event) {
+		const w = Math.min(event.target.innerWidth / 1.2, 800);
+		this.elRef.nativeElement.querySelector('.grid-container').style.width = `${w}px`;
+		this.elRef.nativeElement.querySelector('.grid-container').style.height = `${w}px`;
+	}
 }

@@ -16,7 +16,7 @@
   border-radius: 5px;
 }
 .card.flipped {
-  transform: rotateY( 180deg );
+  transform: rotateY(180deg);
 }
 .card div {
   display: block;
@@ -29,11 +29,11 @@
 }
 .card .back {
   background: #3f51b5;
-  transform: rotateY( 0deg );
+  transform: rotateY(0deg);
 }
 .card .front {
   background: #3f51b5;
-  transform: rotateY( 180deg );
+  transform: rotateY(180deg);
   display: flex;
 }
 
