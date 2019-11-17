@@ -10,11 +10,19 @@ export type RoutesWithData = Routes & { data?: RouteData };
 
 export const routes: RoutesWithData = [
   {
-    path: '',
+    path: 'memory',
     loadChildren: () => import('projects/memory-game/src/lib/memory-game.module').then(m => m.MemoryGameModule),
     data: {
-      labelKey: 'Memory Game',
-      labelDescriptionKey: 'Memory Game'
+      labelKey: 'Paires',
+      labelDescriptionKey: 'Memory'
+    }
+  },
+  {
+    path: 'inhibition',
+    loadChildren: () => import('projects/inhibition/src/lib/inhibition.module').then(m => m.InhibitionModule),
+    data: {
+      labelKey: 'Inhibition',
+      labelDescriptionKey: 'Inhibition'
     }
   }
 ];

@@ -52,6 +52,7 @@ import { routes } from './app-routing.module';
 			}
       .mat-toolbar {
           height: 56px !important;
+          min-height: 56px !important;
       }
 		`
 	]

@@ -35,7 +35,7 @@ import { range } from 'lodash';
 					</mat-select>
 				</mat-form-field>
 				<div>
-					<button mat-raised-button color="primary" class="h2" [routerLink]="['/game']" [queryParams]="config">
+					<button mat-raised-button color="primary" class="h2" [routerLink]="['./game']" [queryParams]="config">
 						Jouer
 					</button>
 				</div>
