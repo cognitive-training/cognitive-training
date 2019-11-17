@@ -17,6 +17,7 @@ import {
 } from 'rxjs/operators';
 import { MatDialog } from '@angular/material';
 import { Router } from '@angular/router';
+import { InhibitionScoreService } from './inhibition-score.service';
 
 @Component({
 	selector: 'lib-inhibition',
@@ -75,6 +76,13 @@ export class InhibitionComponent implements OnDestroy {
 			])
 				.pipe(
 					tap(([length, score, validCount, errorCount, initialDeckValidCount]) => {
+						this.scoreService.register({
+							length,
+							score,
+							validCount,
+							errorCount,
+							initialDeckValidCount
+						});
 						this.router.navigate(['/inhibition/score'], {
 							queryParamsHandling: 'merge',
 							queryParams: {
@@ -146,7 +154,7 @@ export class InhibitionComponent implements OnDestroy {
 		this.errorCount$
 	]).pipe(map(([d, v, validCount, errorCount]) => d - (v - validCount) - errorCount));
 
-	constructor(private inhibitionService: InhibitionService, private dialog: MatDialog, private router: Router) {}
+	constructor(private inhibitionService: InhibitionService, private scoreService: InhibitionScoreService, private router: Router) {}
 
 	ngOnDestroy() {}
 }

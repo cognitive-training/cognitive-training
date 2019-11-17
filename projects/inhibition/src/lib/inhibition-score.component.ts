@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { map, pluck } from 'rxjs/operators';
 import { combineLatest } from 'rxjs';
+import { InhibitionScoreService } from './inhibition-score.service';
 
 @Component({
 	selector: 'lib-inhibition-score',
@@ -33,6 +34,14 @@ import { combineLatest } from 'rxjs';
 				>
 					Rejouer
 				</button>
+
+				<div class="h2 mt4">
+					Historique des scores:
+					<div class="block h2 p1" *ngFor="let item of history$ | async">
+						{{ item.date | date: 'medium' }} - {{ item.score }} / {{ item.length }} - {{ item.errorCount }} erreurs -
+						{{ item.initialDeckValidCount - item.validCount }} manqués
+					</div>
+				</div>
 			</div>
 		</div>
 	`
@@ -45,5 +54,8 @@ export class InhibitionScoreComponent {
 	initialDeckValidCount$ = this.activatedRoute.queryParams.pipe(pluck('initialDeckValidCount'));
 	validCount$ = this.activatedRoute.queryParams.pipe(pluck('validCount'));
 	missCount$ = combineLatest([this.initialDeckValidCount$, this.validCount$]).pipe(map(([a, b]) => +a - +b));
-	constructor(private activatedRoute: ActivatedRoute) {}
+
+	history$ = this.name$.pipe(map(name => JSON.parse(this.scoreService.getScore(name))));
+
+	constructor(private activatedRoute: ActivatedRoute, private scoreService: InhibitionScoreService) {}
 }
