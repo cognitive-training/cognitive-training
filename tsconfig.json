@@ -30,6 +30,18 @@
       ],
       "inhibition/*": [
         "dist/inhibition/*"
+      ],
+      "patient": [
+        "dist/patient"
+      ],
+      "patient/*": [
+        "dist/patient/*"
+      ],
+      "stroop": [
+        "dist/stroop"
+      ],
+      "stroop/*": [
+        "dist/stroop/*"
       ]
     }
   },

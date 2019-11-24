@@ -6,11 +6,11 @@
 }
 
 .img-container {
-	height: calc(100% - 72px);
+	height: calc(100% - 4px); // calc(100% - 72px);
 }
 
 .img-container > img {
-	height: 90%;
+	height: 70%;
 	width: auto;
 }
 

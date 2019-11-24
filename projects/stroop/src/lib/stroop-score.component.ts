@@ -1,10 +1,9 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { map, pluck } from 'rxjs/operators';
-import { combineLatest } from 'rxjs';
+import { pluck } from 'rxjs/operators';
 
 @Component({
-	selector: 'lib-inhibition-score',
+	selector: 'lib-stroop-score',
 	template: `
 		<mat-card>
 			<div class="flex flex-auto justify-between items-center">
@@ -12,7 +11,7 @@ import { combineLatest } from 'rxjs';
 					mat-raised-button
 					color="primary"
 					class="h3"
-					[routerLink]="['/inhibition/']"
+					[routerLink]="['/stroop/']"
 					queryParamsHandling="preserve"
 				>
 					Retour
@@ -25,16 +24,11 @@ import { combineLatest } from 'rxjs';
 				<h3>Tu as terminé la séquence !</h3>
 				<p>Ton score est de {{ score$ | async }}/{{ length$ | async }}.</p>
 				<br />
-				<p>
-					Tu as commis {{ errorCount$ | async }} erreur<span *ngIf="(errorCount$ | async) > 1">s</span> pour la cible.
-				</p>
-				<p>Tu as manqué {{ missCount$ | async }} image<span *ngIf="(missCount$ | async) > 1">s</span>.</p>
-				<br />
 				<button
 					mat-raised-button
 					color="primary"
 					class="h2"
-					[routerLink]="['/inhibition/game']"
+					[routerLink]="['/stroop/game']"
 					queryParamsHandling="preserve"
 				>
 					Rejouer
@@ -43,14 +37,10 @@ import { combineLatest } from 'rxjs';
 		</div>
 	`
 })
-export class InhibitionScoreComponent {
+export class StroopScoreComponent {
 	name$ = this.activatedRoute.queryParams.pipe(pluck('name'));
 	length$ = this.activatedRoute.queryParams.pipe(pluck('length'));
 	score$ = this.activatedRoute.queryParams.pipe(pluck('score'));
-	errorCount$ = this.activatedRoute.queryParams.pipe(pluck('errorCount'));
-	initialDeckValidCount$ = this.activatedRoute.queryParams.pipe(pluck('initialDeckValidCount'));
-	validCount$ = this.activatedRoute.queryParams.pipe(pluck('validCount'));
-	missCount$ = combineLatest([this.initialDeckValidCount$, this.validCount$]).pipe(map(([a, b]) => +a - +b));
 
 	constructor(private activatedRoute: ActivatedRoute) {}
 }

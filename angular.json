@@ -23,13 +23,18 @@
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
-            "aot": true,
+            "aot": false,
             "assets": [
               "src/favicon.ico",
               "src/assets",
               {
                 "glob": "**/*",
                 "input": "projects/memory-game/src/assets",
+                "output": "./assets/"
+              },
+              {
+                "glob": "**/*",
+                "input": "projects/stroop/src/assets",
                 "output": "./assets/"
               }
             ],
@@ -52,7 +57,7 @@
               "sourceMap": false,
               "extractCss": true,
               "namedChunks": false,
-              "aot": true,
+              "aot": false,
               "extractLicenses": true,
               "vendorChunk": false,
               "buildOptimizer": true,
@@ -157,6 +162,76 @@
             "tsConfig": [
               "projects/inhibition/tsconfig.lib.json",
               "projects/inhibition/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
+    },
+    "patient": {
+      "projectType": "library",
+      "root": "projects/patient",
+      "sourceRoot": "projects/patient/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-ng-packagr:build",
+          "options": {
+            "tsConfig": "projects/patient/tsconfig.lib.json",
+            "project": "projects/patient/ng-package.json"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/patient/src/test.ts",
+            "tsConfig": "projects/patient/tsconfig.spec.json",
+            "karmaConfig": "projects/patient/karma.conf.js"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/patient/tsconfig.lib.json",
+              "projects/patient/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
+    },
+    "stroop": {
+      "projectType": "library",
+      "root": "projects/stroop",
+      "sourceRoot": "projects/stroop/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-ng-packagr:build",
+          "options": {
+            "tsConfig": "projects/stroop/tsconfig.lib.json",
+            "project": "projects/stroop/ng-package.json"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/stroop/src/test.ts",
+            "tsConfig": "projects/stroop/tsconfig.spec.json",
+            "karmaConfig": "projects/stroop/karma.conf.js"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/stroop/tsconfig.lib.json",
+              "projects/stroop/tsconfig.spec.json"
             ],
             "exclude": [
               "**/node_modules/**"

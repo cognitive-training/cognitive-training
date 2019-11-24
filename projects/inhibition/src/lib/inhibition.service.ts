@@ -1,16 +1,15 @@
 import { Injectable } from '@angular/core';
 import { imageList } from '../assets/img/christmas';
-import { combineLatest, from, fromEvent, Observable, of } from 'rxjs';
+import { combineLatest, from, fromEvent, merge, Observable, of, timer } from 'rxjs';
 import {
-	concatMap,
-	delay,
 	distinctUntilChanged,
-	endWith,
 	filter,
-	first,
 	map,
+	mapTo,
 	pluck,
 	shareReplay,
+	skip,
+	startWith,
 	switchMap,
 	takeWhile,
 	toArray,
@@ -49,14 +48,13 @@ export class InhibitionService {
 		distinctUntilChanged()
 	);
 
-	mapFilenameToVisual = target =>
-		map(
-			(fileName: string): IVisual => ({
-				name: fileName,
-				url: `assets/img/christmas/${fileName}`,
-				target: fileName === target
-			})
-		);
+	filenameToVisual = target => (fileName: string): IVisual => ({
+		name: fileName,
+		url: `assets/img/christmas/${fileName}`,
+		target: fileName === target
+	});
+
+	mapFilenameToVisual = target => map(this.filenameToVisual(target));
 
 	imageList$ = of(imageList);
 
@@ -73,8 +71,7 @@ export class InhibitionService {
 		this.length$,
 		this.target$,
 		this.occurence$,
-		this.imageListWithoutTarget$,
-		this.spaceKeyDown$.pipe(first())
+		this.imageListWithoutTarget$
 	]).pipe(
 		switchMap(([length, target, occurence, imageListWithoutTarget]) =>
 			from(new Array(+length).fill(target)).pipe(
@@ -83,7 +80,18 @@ export class InhibitionService {
 				),
 				this.mapFilenameToVisual(target),
 				toArray(),
-				map(list => shuffle(list))
+				map(list => shuffle(list)),
+				map(list => {
+					const result = [...list];
+					for (let i = 1; i < result.length; i++) {
+						const prev = result[i - 1];
+						if (prev.name === target) continue;
+						while (prev.name === result[i].name) {
+							result[i] = this.filenameToVisual(target)(sample(imageListWithoutTarget));
+						}
+					}
+					return result;
+				})
 			)
 		),
 		shareReplay(1)
@@ -94,13 +102,43 @@ export class InhibitionService {
 	currentVisual$: Observable<IVisual> = this.initialDeck$.pipe(
 		withLatestFrom(this.duration$),
 		switchMap(([visualList, duration]) =>
-			from(visualList).pipe(
-				endWith(null),
-				concatMap((visual, index) => (index > 0 ? of(visual).pipe(delay(duration)) : of(visual)))
-			)
+			this.spaceKeyDown$
+				.pipe(switchMap(() => timer(300, duration)))
+				.pipe(map((_, index) => (index < visualList.length ? visualList[index] : null)))
 		),
 		takeWhile(v => v !== null),
-		shareReplay()
+		shareReplay(1)
+	);
+
+	inputValue$ = merge(
+		this.spaceKeyDown$.pipe(
+			skip(1),
+			mapTo(true)
+		),
+		this.currentVisual$.pipe(mapTo(false))
+	).pipe(
+		distinctUntilChanged(),
+		shareReplay(1)
+	);
+
+	validCount$ = this.inputValue$.pipe(
+		withLatestFrom(this.currentVisual$),
+		filter(([spaceKeyDown, visual]) => spaceKeyDown && !visual.target),
+		map((_, index) => ++index),
+		startWith(0),
+		shareReplay(1)
+	);
+
+	errorCount$ = this.inputValue$.pipe(
+		withLatestFrom(this.currentVisual$),
+		filter(([spaceKeyDown, visual]) => spaceKeyDown && visual.target),
+		map((_, index) => ++index),
+		startWith(0),
+		shareReplay(1)
+	);
+
+	score$ = combineLatest([this.length$, this.initialDeckValidCount$, this.validCount$, this.errorCount$]).pipe(
+		map(([d, v, validCount, errorCount]) => +d - (v - validCount) - errorCount)
 	);
 
 	constructor(private activatedRoute: ActivatedRoute) {}

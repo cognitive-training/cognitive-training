@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { range } from 'lodash';
 import { imageList } from '../assets/img/christmas';
-import { map, pluck, startWith, tap } from 'rxjs/operators';
+import { filter, map, pluck, startWith } from 'rxjs/operators';
 import { combineLatest } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 
@@ -87,30 +87,36 @@ export class InhibitionMenuComponent {
 
 	name$ = this.activatedRoute.queryParams.pipe(
 		pluck('name'),
+		filter(Boolean),
 		startWith('Amandine')
 	);
 	length$ = this.activatedRoute.queryParams.pipe(
 		pluck('length'),
+		filter(Boolean),
+
 		map(v => +v),
 		startWith(this.lengthList[1])
 	);
 	duration$ = this.activatedRoute.queryParams.pipe(
 		pluck('duration'),
+		filter(Boolean),
+
 		map(v => +v),
 		startWith(this.durationList[1])
 	);
 	target$ = this.activatedRoute.queryParams.pipe(
 		pluck('target'),
+		filter(Boolean),
 		startWith(imageList[0])
 	);
 	occurence$ = this.activatedRoute.queryParams.pipe(
 		pluck('occurence'),
+		filter(Boolean),
 		map(v => +v),
 		startWith(this.occurenceList[1])
 	);
 
 	config$ = combineLatest([this.name$, this.length$, this.duration$, this.target$, this.occurence$]).pipe(
-		tap(console.log),
 		map(([name, length, duration, target, occurence]) => ({
 			name,
 			length,
@@ -119,19 +125,6 @@ export class InhibitionMenuComponent {
 			occurence
 		}))
 	);
-	// config = {};
 
 	constructor(private activatedRoute: ActivatedRoute) {}
-
-	// ngOnInit() {
-	// 	this.config = this.config$.pipe(
-	// 		tap(console.log),
-	// 		map(([name, length, duration, target, occurence]) => ({
-	// 		name,
-	// 		length,
-	// 		duration,
-	// 		target,
-	// 		occurence
-	// 	}))).subscribe();
-	// }
 }

@@ -1,0 +1,60 @@
+@import '~@angular/material/theming';
+
+.game-container {
+	height: calc(100% - 4px); // calc(100% - 72px);
+	> div {
+		&.intro {
+			color: black;
+			font-size: 2rem;
+		}
+
+		.number {
+			font-size: 8rem;
+			color: white;
+			width: 200px;
+			height: 200px;
+			border-radius: 50%;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+
+			&.number-scale-2 {
+				font-size: 9rem;
+				width: 300px;
+				height: 300px;
+			}
+			&.number-scale-3 {
+				font-size: 10rem;
+				width: 400px;
+				height: 400px;
+			}
+		}
+		.number-1 {
+			background-color: map-get($mat-blue, 500);
+		}
+		.number-2 {
+			background-color: map-get($mat-orange, 500);
+		}
+		.number-3 {
+			background-color: map-get($mat-green, 500);
+		}
+		.number-4 {
+			background-color: map-get($mat-indigo, 500);
+		}
+		.number-5 {
+			background-color: map-get($mat-red, 500);
+		}
+		.number-6 {
+			background-color: map-get($mat-purple, 500);
+		}
+		.number-7 {
+			background-color: map-get($mat-pink, 500);
+		}
+		.number-8 {
+			background-color: map-get($mat-teal, 500);
+		}
+		.number-9 {
+			background-color: map-get($mat-amber, 500);
+		}
+	}
+}

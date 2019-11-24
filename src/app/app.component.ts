@@ -31,6 +31,7 @@ import { routes } from './app-routing.module';
 						queryParamsHandling="preserve"
 						(click)="closeSideNav()"
 						routerLinkActive="active-link"
+						class="text-decoration-none"
 					>
 						<div class="flex-auto">
 							<div>{{ navView.data.labelKey }}</div>

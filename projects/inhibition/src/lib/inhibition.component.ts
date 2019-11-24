@@ -1,34 +1,26 @@
 import { Component, OnDestroy } from '@angular/core';
 import { InhibitionService } from './inhibition.service';
-import { combineLatest, merge, timer } from 'rxjs';
-import {
-	distinctUntilChanged,
-	filter,
-	finalize,
-	map,
-	mapTo,
-	shareReplay,
-	skip,
-	startWith,
-	switchMap,
-	take,
-	tap,
-	withLatestFrom
-} from 'rxjs/operators';
-import { MatDialog } from '@angular/material';
+import { combineLatest, timer } from 'rxjs';
+import { finalize, map, shareReplay, switchMap, take, tap, withLatestFrom } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { InhibitionScoreService } from './inhibition-score.service';
 
 @Component({
 	selector: 'lib-inhibition',
 	template: `
-		<mat-card>
+		<mat-card class="hide">
 			<div class="flex flex-auto justify-between items-center">
-				<button mat-raised-button color="primary" class="h3" [routerLink]="['..']" queryParamsHandling="preserve">
+				<button
+					mat-raised-button
+					color="primary"
+					class="h3"
+					[routerLink]="['/inhibition']"
+					queryParamsHandling="preserve"
+				>
 					Retour
 				</button>
-				<div class="h3">{{validCount$ | async}}</div>
-				<div class="h3">{{errorCount$ | async}}</div>
+				<div class="h3 hide">{{ validCount$ | async }}</div>
+				<div class="h3 hide">{{ errorCount$ | async }}</div>
 			</div>
 		</mat-card>
 		<mat-progress-bar [value]="timeLeft$ | async" mode="determinate"></mat-progress-bar>
@@ -36,14 +28,14 @@ import { InhibitionScoreService } from './inhibition-score.service';
 			*ngIf="currentVisual$ | async as visual; else defaultTemplate"
 			class="img-container flex justify-center items-center border-box"
 			[ngClass]="{
-				valid: !visual.target && spaceKeyDown$ | async
+				valid: (!visual.target && inputValue$ | async) || (visual.target && (timeLeft$ | async) < 30)
 			}"
 		>
 			<img
 				[src]="visual.url"
 				[alt]="visual.name"
 				[ngClass]="{
-					error: visual.target && spaceKeyDown$ | async
+					error: visual.target && inputValue$ | async
 				}"
 			/>
 		</div>
@@ -69,9 +61,9 @@ export class InhibitionComponent implements OnDestroy {
 		finalize(() => {
 			combineLatest([
 				this.inhibitionService.length$,
-				this.score$,
-				this.validCount$,
-				this.errorCount$,
+				this.inhibitionService.score$,
+				this.inhibitionService.validCount$,
+				this.inhibitionService.errorCount$,
 				this.inhibitionService.initialDeckValidCount$
 			])
 				.pipe(
@@ -97,11 +89,13 @@ export class InhibitionComponent implements OnDestroy {
 					take(1)
 				)
 				.subscribe();
-		}),
-		shareReplay(1)
+		})
 	);
 
 	target$ = this.inhibitionService.target$;
+	validCount$ = this.inhibitionService.validCount$;
+	errorCount$ = this.inhibitionService.errorCount$;
+	inputValue$ = this.inhibitionService.inputValue$;
 
 	timeLeft$ = this.inhibitionService.currentVisual$.pipe(
 		withLatestFrom(this.inhibitionService.duration$),
@@ -114,47 +108,15 @@ export class InhibitionComponent implements OnDestroy {
 				take(duration / refreshRate),
 				map(v => Math.ceil(100 - (v / (duration / refreshRate - 1)) * 100))
 			)
-		)
-	);
-
-	spaceKeyDown$ = merge(
-		this.inhibitionService.spaceKeyDown$.pipe(
-			skip(1),
-			mapTo(true)
 		),
-		this.inhibitionService.currentVisual$.pipe(mapTo(false))
-	).pipe(
-		distinctUntilChanged(),
-		shareReplay()
-	);
-
-	validCount$ = this.spaceKeyDown$.pipe(
-		withLatestFrom(this.currentVisual$),
-		filter(([spaceKeyDown, visual]) => spaceKeyDown && !visual.target),
-		map((_, index) => ++index),
-		startWith(0),
 		shareReplay(1)
 	);
 
-	errorCount$ = this.spaceKeyDown$.pipe(
-		withLatestFrom(this.currentVisual$),
-		filter(([spaceKeyDown, visual]) => spaceKeyDown && visual.target),
-		map((_, index) => ++index),
-		startWith(0),
-		shareReplay(1)
-	);
-
-	score$ = combineLatest([
-		this.inhibitionService.length$,
-		this.inhibitionService.currentVisual$.pipe(
-			filter(v => !v.target),
-			map((_, index) => ++index)
-		),
-		this.validCount$,
-		this.errorCount$
-	]).pipe(map(([d, v, validCount, errorCount]) => d - (v - validCount) - errorCount));
-
-	constructor(private inhibitionService: InhibitionService, private scoreService: InhibitionScoreService, private router: Router) {}
+	constructor(
+		private inhibitionService: InhibitionService,
+		private scoreService: InhibitionScoreService,
+		private router: Router
+	) {}
 
 	ngOnDestroy() {}
 }

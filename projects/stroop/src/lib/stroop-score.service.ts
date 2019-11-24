@@ -6,7 +6,7 @@ import { PatientService } from '../../../patient/src/lib/patient.service';
 @Injectable({
 	providedIn: 'root'
 })
-export class InhibitionScoreService {
+export class StroopScoreService {
 	name$ = this.activatedRoute.queryParams.pipe(pluck('name'));
 
 	constructor(private activatedRoute: ActivatedRoute, private patientService: PatientService) {}
@@ -19,7 +19,7 @@ export class InhibitionScoreService {
 					const s = [...(patient.score || []), ...(patient.inhibitionScore || []), ];
 					this.patientService.updatePatient(name, {
 						score: undefined,
-						inhibitionScore: [...s, { ...score, date: Date.now() }]
+						stroopScore: [...s, { ...score, date: Date.now() }]
 					});
 				})
 			)
