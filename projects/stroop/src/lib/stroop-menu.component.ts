@@ -15,10 +15,10 @@ import { ActivatedRoute } from '@angular/router';
 			<div class="col-6 p1">
 				<h4 class="h3">Objectif</h4>
 				<p class="h3">
-					Blah
+					Désigne la bonne image selon les règles qui te sont énoncées.
 					<br />
 					<br />
-					<span class="bold">Astuce</span>: Blah.
+					<span class="bold">Astuce</span>: Prends le temps d'analyser chaque situation.
 				</p>
 			</div>
 			<div class="col-6 p1">
@@ -33,6 +33,14 @@ import { ActivatedRoute } from '@angular/router';
 						<mat-select [(value)]="config.length">
 							<mat-option *ngFor="let length of lengthList" [value]="length">
 								{{ length }}
+							</mat-option>
+						</mat-select>
+					</mat-form-field>
+					<mat-form-field>
+						<mat-label>Mode</mat-label>
+						<mat-select [(value)]="config.mode">
+							<mat-option *ngFor="let mode of modeList" [value]="mode">
+								{{ mode }}
 							</mat-option>
 						</mat-select>
 					</mat-form-field>
@@ -55,6 +63,7 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class StroopMenuComponent {
 	lengthList = range(2, 100);
+	modeList = ['numbers', 'animals'];
 
 	name$ = this.activatedRoute.queryParams.pipe(
 		pluck('name'),
@@ -68,10 +77,17 @@ export class StroopMenuComponent {
 		startWith(this.lengthList[1])
 	);
 
-	config$ = combineLatest([this.name$, this.length$]).pipe(
-		map(([name, length]) => ({
+	mode$ = this.activatedRoute.queryParams.pipe(
+		pluck('mode'),
+		filter(Boolean),
+		startWith(this.modeList[0])
+	);
+
+	config$ = combineLatest([this.name$, this.length$, this.mode$]).pipe(
+		map(([name, length, mode]) => ({
 			name,
-			length
+			length,
+			mode
 		}))
 	);
 

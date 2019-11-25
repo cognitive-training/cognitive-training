@@ -3,7 +3,7 @@ import { Item, StroopService } from './stroop.service';
 import { endWith, finalize, mapTo, take, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { StroopScoreService } from './stroop-score.service';
-import { Observable } from 'rxjs';
+import { combineLatest, Observable } from 'rxjs';
 
 @Component({
 	selector: 'lib-stroop',
@@ -27,7 +27,8 @@ import { Observable } from 'rxjs';
 					]"
 					class="number"
 				>
-					{{ item[0].value }}
+					<div *ngIf="(mode$ | async) === 'numbers'">{{ item[0].value }}</div>
+					<img *ngIf="(mode$ | async) === 'animals'" src="assets/img/{{ item[0].value }}.png" alt=""/>
 				</div>
 				<div
 					[ngClass]="[
@@ -38,7 +39,8 @@ import { Observable } from 'rxjs';
 					]"
 					class="number"
 				>
-					{{ item[1].value }}
+					<div *ngIf="(mode$ | async) === 'numbers'">{{ item[1].value }}</div>
+					<img *ngIf="(mode$ | async) === 'animals'" src="assets/img/{{ item[1].value }}.png" alt=""/>
 				</div>
 			</div>
 		</div>
@@ -56,23 +58,25 @@ import { Observable } from 'rxjs';
 })
 export class StroopComponent implements OnDestroy {
 	currentItem$: Observable<Item[]> = this.stroopService.currentItem$;
+	mode$ = this.stroopService.mode$;
 	score$ = this.stroopService.score$;
 	error$ = this.stroopService.error$;
 	success$ = this.stroopService.success$;
 	gameOver$ = this.stroopService.gameOver$.pipe(
 		finalize(() => {
 			setTimeout(() => {
-				this.stroopService.score$
+				combineLatest([this.stroopService.score$, this.stroopService.length$])
 					.pipe(
-						tap(score => {
+						tap(([score, length]) => {
 							this.scoreService.register({
-								length,
-								score
+								score,
+								length
 							});
 							this.router.navigate(['/stroop/score'], {
 								queryParamsHandling: 'merge',
 								queryParams: {
-									score
+									score,
+									length
 								}
 							});
 						}),

@@ -7,6 +7,7 @@ export interface Patient {
 	name: string;
 	score: any[];
 	inhibitionScore: any[];
+	stroopScore: any[];
 }
 
 @Injectable({

@@ -12,6 +12,7 @@ import {
 	startWith,
 	switchMap,
 	takeWhile,
+	throttleTime,
 	withLatestFrom
 } from 'rxjs/operators';
 import { ActivatedRoute } from '@angular/router';
@@ -47,20 +48,26 @@ const firstLt = (item: Item[]) => item[0].value < item[1].value;
 	providedIn: 'root'
 })
 export class StroopService {
-	//todo keyup
-	spaceKeyDown$ = fromEvent(window, 'keydown').pipe(filter((event: KeyboardEvent) => event.keyCode === 32));
-	leftKeyDown$ = fromEvent(window, 'keydown').pipe(filter((event: KeyboardEvent) => event.keyCode === 37));
-	rightKeyDown$ = fromEvent(window, 'keydown').pipe(filter((event: KeyboardEvent) => event.keyCode === 39));
+	spaceKeyDown$ = fromEvent(window, 'keydown').pipe(
+		filter((event: KeyboardEvent) => event.keyCode === 32),
+		filter(event => !event.repeat)
+	);
+	leftKeyDown$ = fromEvent(window, 'keydown').pipe(
+		filter((event: KeyboardEvent) => event.keyCode === 37),
+		filter(event => !event.repeat)
+	);
+	rightKeyDown$ = fromEvent(window, 'keydown').pipe(
+		filter((event: KeyboardEvent) => event.keyCode === 39),
+		filter(event => !event.repeat)
+	);
 
 	length$ = this.activatedRoute.queryParams.pipe(
 		pluck('length'),
 		map(v => +v),
 		distinctUntilChanged()
 	);
-
-	occurence$ = this.activatedRoute.queryParams.pipe(
-		pluck('occurence'),
-		map(v => +v),
+	mode$ = this.activatedRoute.queryParams.pipe(
+		pluck('mode'),
 		distinctUntilChanged()
 	);
 

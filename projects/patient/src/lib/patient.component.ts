@@ -36,6 +36,16 @@ import { filter, map, tap } from 'rxjs/operators';
 					[dynamicResize]="true"
 					[options]="data2Options$ | async"
 				></google-chart>
+				<h4 class="h4">Stroop</h4>
+				<google-chart
+					*ngIf="dataStroop$ | async as dataStroop"
+					title="Progression du score avec les répétitions"
+					type="LineChart"
+					[data]="dataStroop"
+					[firstRowIsData]="true"
+					[dynamicResize]="true"
+					[options]="dataStroopOptions$ | async"
+				></google-chart>
 			</div>
 		</div>
 	`,
@@ -54,12 +64,17 @@ export class PatientComponent {
 
 	data$ = this.patient$.pipe(
 		filter(patient => !!patient.inhibitionScore),
-		map(patient => patient.score.map(s => [+s.length, (s.score / +s.length) * 100]))
+		map(patient => patient.inhibitionScore.map(s => [+s.length, (s.score / +s.length) * 100]))
 	);
 
 	data2$ = this.patient$.pipe(
 		filter(patient => !!patient.inhibitionScore),
-		map(patient => patient.score.map((s, i) => [+i, (s.score / +s.length) * 100])),
+		map(patient => patient.inhibitionScore.map((s, i) => [+i, (s.score / +s.length) * 100]))
+	);
+
+	dataStroop$ = this.patient$.pipe(
+		filter(patient => !!patient.stroopScore),
+		map(patient => patient.stroopScore.map((s, i) => [+i, (+s.score / +s.length) * 100]))
 	);
 
 	dataOptions$ = this.data$.pipe(
@@ -75,6 +90,19 @@ export class PatientComponent {
 	);
 
 	data2Options$ = this.data2$.pipe(
+		map(data => ({
+			animation: {
+				duration: 1000,
+				easing: 'out'
+			},
+			legend: 'none',
+			curveType: 'function',
+			hAxis: { title: 'répétition', minValue: 0, maxValue: data.length - 1 },
+			vAxis: { title: 'score', minValue: 0, maxValue: 100 }
+		}))
+	);
+
+	dataStroopOptions$ = this.dataStroop$.pipe(
 		map(data => ({
 			animation: {
 				duration: 1000,

@@ -7,6 +7,7 @@ import { PatientService } from '../../../patient/src/lib/patient.service';
 	providedIn: 'root'
 })
 export class StroopScoreService {
+	scoreName = 'stroopScore';
 	name$ = this.activatedRoute.queryParams.pipe(pluck('name'));
 
 	constructor(private activatedRoute: ActivatedRoute, private patientService: PatientService) {}
@@ -16,10 +17,8 @@ export class StroopScoreService {
 			.pipe(
 				tap(name => {
 					const patient = this.patientService.getPatient(name);
-					const s = [...(patient.score || []), ...(patient.inhibitionScore || []), ];
 					this.patientService.updatePatient(name, {
-						score: undefined,
-						stroopScore: [...s, { ...score, date: Date.now() }]
+						[this.scoreName]: [...(patient[this.scoreName] || []), { ...score, date: Date.now() }]
 					});
 				})
 			)
