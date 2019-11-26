@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { BehaviorSubject, from } from 'rxjs';
-import { toArray } from 'rxjs/operators';
+import { filter, toArray } from 'rxjs/operators';
 import { routes } from './app-routing.module';
 
 @Component({
@@ -11,7 +11,7 @@ import { routes } from './app-routing.module';
 				<button mat-icon-button (click)="toggleSideNav()">
 					<mat-icon class="header-icon">menu</mat-icon>
 				</button>
-				<h1 class="mat-h1">Cognitive Training</h1>
+				<h1 class="mat-h1 cursor-pointer" routerLink="/">Entraînement cognitif 💪🧠🕹️</h1>
 				<div id="sot-header-extra" class="flex flex-auto justify-end"></div>
 			</mat-toolbar-row>
 		</mat-toolbar>
@@ -36,7 +36,9 @@ import { routes } from './app-routing.module';
 						<div class="flex-auto">
 							<div>{{ navView.data.labelKey }}</div>
 						</div>
-						<button mat-icon-button><mat-icon>keyboard_arrow_right</mat-icon></button>
+						<button mat-icon-button>
+							<mat-icon>keyboard_arrow_right</mat-icon>
+						</button>
 						<mat-divider inset *ngIf="!last"></mat-divider>
 					</a>
 				</mat-action-list>
@@ -51,10 +53,11 @@ import { routes } from './app-routing.module';
 			.mat-sidenav-container {
 				height: calc(100% - 56px);
 			}
-      .mat-toolbar {
-          height: 56px !important;
-          min-height: 56px !important;
-      }
+
+			.mat-toolbar {
+				height: 56px !important;
+				min-height: 56px !important;
+			}
 		`
 	]
 })
@@ -62,16 +65,18 @@ export class AppComponent {
 	sideNavOpen$ = new BehaviorSubject<boolean>(false);
 
 	navItemList$ = from(routes).pipe(
-		// filter(({ data }) => !isEmpty(data)),
+		filter(route => !!route.data),
 		toArray()
 	);
 
 	openSideNav() {
 		this.sideNavOpen$.next(true);
 	}
+
 	closeSideNav() {
 		this.sideNavOpen$.next(false);
 	}
+
 	toggleSideNav() {
 		this.sideNavOpen$.next(!this.sideNavOpen$.getValue());
 	}

@@ -9,6 +9,7 @@ export interface RouteData {
 export type RoutesWithData = Routes & { data?: RouteData };
 
 export const routes: RoutesWithData = [
+	{ path: '', redirectTo: '/home', pathMatch: 'full' },
 	{
 		path: 'memory',
 		loadChildren: () => import('projects/memory-game/src/lib/memory-game.module').then(m => m.MemoryGameModule),
@@ -40,6 +41,10 @@ export const routes: RoutesWithData = [
 			labelKey: 'Patients',
 			labelDescriptionKey: 'Patients'
 		}
+	},
+	{
+		path: 'home',
+		loadChildren: () => import('projects/home/src/lib/home.module').then(m => m.HomeModule)
 	}
 ];
 

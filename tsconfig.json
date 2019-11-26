@@ -42,6 +42,12 @@
       ],
       "stroop/*": [
         "dist/stroop/*"
+      ],
+      "home": [
+        "dist/home"
+      ],
+      "home/*": [
+        "dist/home/*"
       ]
     }
   },

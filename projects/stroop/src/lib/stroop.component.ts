@@ -1,6 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Item, StroopService } from './stroop.service';
-import { endWith, finalize, mapTo, take, tap } from 'rxjs/operators';
+import { endWith, filter, finalize, mapTo, take, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { StroopScoreService } from './stroop-score.service';
 import { combineLatest, Observable } from 'rxjs';
@@ -28,7 +28,7 @@ import { combineLatest, Observable } from 'rxjs';
 					class="number"
 				>
 					<div *ngIf="(mode$ | async) === 'numbers'">{{ item[0].value }}</div>
-					<img *ngIf="(mode$ | async) === 'animals'" src="assets/img/{{ item[0].value }}.png" alt=""/>
+					<img *ngIf="(mode$ | async) === 'animals'" src="assets/svg/{{ item[0].value }}.svg" alt=""/>
 				</div>
 				<div
 					[ngClass]="[
@@ -40,12 +40,12 @@ import { combineLatest, Observable } from 'rxjs';
 					class="number"
 				>
 					<div *ngIf="(mode$ | async) === 'numbers'">{{ item[1].value }}</div>
-					<img *ngIf="(mode$ | async) === 'animals'" src="assets/img/{{ item[1].value }}.png" alt=""/>
+					<img *ngIf="(mode$ | async) === 'animals'" src="assets/svg/{{ item[1].value }}.svg" alt=""/>
 				</div>
 			</div>
 		</div>
 		<ng-template #defaultTemplate>
-			<div class="h1 center intro">
+			<div class="h1 center intro p2">
 				Appuie sur la flèche gauche ou droite correspondant à la position de l'élément le plus grand.
 				<br />
 				<br />
@@ -56,14 +56,15 @@ import { combineLatest, Observable } from 'rxjs';
 	styleUrls: [`./stroop.component.scss`],
 	providers: [StroopService]
 })
-export class StroopComponent implements OnDestroy {
+export class StroopComponent {
 	currentItem$: Observable<Item[]> = this.stroopService.currentItem$;
 	mode$ = this.stroopService.mode$;
 	score$ = this.stroopService.score$;
 	error$ = this.stroopService.error$;
 	success$ = this.stroopService.success$;
 	gameOver$ = this.stroopService.gameOver$.pipe(
-		finalize(() => {
+		filter(Boolean),
+		tap(() => {
 			setTimeout(() => {
 				combineLatest([this.stroopService.score$, this.stroopService.length$])
 					.pipe(
@@ -90,6 +91,4 @@ export class StroopComponent implements OnDestroy {
 	);
 
 	constructor(private stroopService: StroopService, private scoreService: StroopScoreService, private router: Router) {}
-
-	ngOnDestroy() {}
 }

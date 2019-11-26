@@ -117,7 +117,7 @@ export class StroopService {
 
 	success$ = merge(this.currentItem$.pipe(mapTo(false)), this.validChoice$).pipe(shareReplay(1));
 
-	gameOver$ = this.currentItem$.pipe(takeWhile(v => v !== null));
+	gameOver$ = this.currentItem$.pipe(map(v => v === null));
 
 	constructor(private activatedRoute: ActivatedRoute) {}
 }

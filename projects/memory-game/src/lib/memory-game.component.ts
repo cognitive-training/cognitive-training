@@ -83,7 +83,6 @@ export class MemoryGameComponent implements OnInit, OnDestroy {
 			// if (isXs) {
 			// 	nbCols = Math.ceil(nbCols / 2);
 			// }
-			// console.log(nbCols);
 			return { 'grid-template': `repeat(${nbCols}, minmax(0, 1fr)) / repeat(${nbCols}, minmax(0, 1fr))` };
 		})
 	);
@@ -103,9 +102,7 @@ export class MemoryGameComponent implements OnInit, OnDestroy {
 		this.memoryGame.selectCard(card);
 	}
 
-	ngOnDestroy(): void {
-		console.log('destroy');
-	}
+	ngOnDestroy(): void {}
 
 	ngOnInit(): void {
 		this.memoryGame.win$.subscribe(([, nbTries]) => {

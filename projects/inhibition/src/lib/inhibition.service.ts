@@ -11,7 +11,6 @@ import {
 	skip,
 	startWith,
 	switchMap,
-	takeWhile,
 	toArray,
 	withLatestFrom
 } from 'rxjs/operators';
@@ -106,7 +105,7 @@ export class InhibitionService {
 				.pipe(switchMap(() => timer(300, duration)))
 				.pipe(map((_, index) => (index < visualList.length ? visualList[index] : null)))
 		),
-		takeWhile(v => v !== null),
+		// takeWhile(v => v !== null),
 		shareReplay(1)
 	);
 
@@ -140,6 +139,8 @@ export class InhibitionService {
 	score$ = combineLatest([this.length$, this.initialDeckValidCount$, this.validCount$, this.errorCount$]).pipe(
 		map(([d, v, validCount, errorCount]) => +d - (v - validCount) - errorCount)
 	);
+
+	gameOver$ = this.currentVisual$.pipe(map(v => v === null));
 
 	constructor(private activatedRoute: ActivatedRoute) {}
 }

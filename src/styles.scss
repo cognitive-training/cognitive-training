@@ -1,14 +1,19 @@
 /* You can add global styles to this file, and also import other style files */
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html,
+body {
+	height: 100%;
+}
+body {
+	margin: 0;
+	font-family: Roboto, 'Helvetica Neue', sans-serif;
+}
 @import '~animate.css';
 @import '~basscss-sass/scss/basscss.scss';
 
 .mat-progress-bar .mat-progress-bar-fill {
-  transition: transform .05s ease !important;
+	transition: transform 0.05s ease !important;
 }
-
 
 @import '~@angular/material/theming';
 // Plus imports for other components in your app.
@@ -22,10 +27,10 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue. Available color palettes: https://material.io/design/color/
 $candy-app-primary: mat-palette($mat-indigo);
-$candy-app-accent:  mat-palette($mat-pink, A200, A100, A400);
+$candy-app-accent: mat-palette($mat-pink, A200, A100, A400);
 
 // The warn palette is optional (defaults to red).
-$candy-app-warn:    mat-palette($mat-red);
+$candy-app-warn: mat-palette($mat-red);
 
 // Create the theme object (a Sass map containing all of the palettes).
 $candy-app-theme: mat-light-theme($candy-app-primary, $candy-app-accent, $candy-app-warn);
@@ -34,3 +39,7 @@ $candy-app-theme: mat-light-theme($candy-app-primary, $candy-app-accent, $candy-
 // Alternatively, you can import and @include the theme mixins for each component
 // that you are using.
 @include angular-material-theme($candy-app-theme);
+
+.cursor-pointer {
+	cursor: pointer;
+}

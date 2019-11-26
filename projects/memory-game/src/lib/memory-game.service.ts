@@ -35,7 +35,6 @@ export class MemoryGameService {
   );
 
   initialDeck$: Observable<ICard[]> = this.difficulty$.pipe(
-    tap(console.log),
     switchMap(difficulty =>
       from(shuffle(imageList)).pipe(
         take(difficulty),
@@ -93,7 +92,6 @@ export class MemoryGameService {
   );
 
   win$ = combineLatest([this.resolvedPairList$, this.difficulty$]).pipe(
-    tap(console.log),
     map(([resolvedPairList, difficulty]) => resolvedPairList.length === +difficulty),
     filter(Boolean),
     withLatestFrom(this.nbTries$)

@@ -20,7 +20,7 @@ import { Observable } from 'rxjs';
 					<!-- Name Column -->
 					<ng-container matColumnDef="name">
 						<th mat-header-cell *matHeaderCellDef>Name</th>
-						<td mat-cell *matCellDef="let patient">{{ patient.name }}</td>
+						<td mat-cell *matCellDef="let patient" [routerLink]="['./details']" [queryParams]="{name: patient.name}">{{ patient.name }}</td>
 					</ng-container>
 
 					<!-- Action Column -->
@@ -38,7 +38,7 @@ import { Observable } from 'rxjs';
 					</ng-container>
 
 					<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-					<tr mat-row *matRowDef="let row; columns: displayedColumns" [routerLink]="['./details']" [queryParams]="{name: row.name}"></tr>
+					<tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
 				</table>
 			</div>
 		</div>
