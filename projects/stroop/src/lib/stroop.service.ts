@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { fromEvent, merge, Observable } from 'rxjs';
+import { fromEvent, merge, Observable, timer } from 'rxjs';
 import {
 	delay,
 	distinctUntilChanged,
@@ -10,8 +10,9 @@ import {
 	pluck,
 	shareReplay,
 	startWith,
-	switchMap,
+	switchMap, take,
 	takeWhile,
+	tap,
 	throttleTime,
 	withLatestFrom
 } from 'rxjs/operators';
@@ -71,6 +72,13 @@ export class StroopService {
 		distinctUntilChanged()
 	);
 
+	duration$ = this.activatedRoute.queryParams.pipe(
+		pluck('duration'),
+		map(duration => +duration * 1000),
+		map(duration => (duration > 0 ? duration : null)),
+		distinctUntilChanged()
+	);
+
 	serie$ = this.length$.pipe(
 		map(length => {
 			const result = [];
@@ -88,12 +96,18 @@ export class StroopService {
 	);
 
 	currentItem$: Observable<Item[]> = this.serie$.pipe(
-		switchMap(itemList =>
-			merge(this.spaceKeyDown$.pipe(first()), this.validChoice$).pipe(
-				delay(500),
-				map((_, index) => (index < itemList.length ? itemList[index] : null))
-			)
+		withLatestFrom(this.duration$),
+		switchMap(([itemList, duration]) =>
+			merge(this.spaceKeyDown$.pipe(first()), this.validChoice$)
+				.pipe(switchMap(() => timer(300, duration).pipe(take(itemList.length + 1))))
+				// .pipe(map((_, index) => (index < itemList.length ? itemList[index] : null)))
+				.pipe(
+					delay(500),
+					map((_, index) => (index < itemList.length ? itemList[index] : null))
+				)
 		),
+		tap(console.log),
+		distinctUntilChanged(),
 		shareReplay(1)
 	);
 

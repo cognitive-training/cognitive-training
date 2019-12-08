@@ -10,7 +10,7 @@ import {
 	shareReplay,
 	skip,
 	startWith,
-	switchMap,
+	switchMap, take, tap,
 	toArray,
 	withLatestFrom
 } from 'rxjs/operators';
@@ -100,12 +100,14 @@ export class InhibitionService {
 
 	currentVisual$: Observable<IVisual> = this.initialDeck$.pipe(
 		withLatestFrom(this.duration$),
-		switchMap(([visualList, duration]) =>
+		switchMap(([itemList, duration]) =>
 			this.spaceKeyDown$
-				.pipe(switchMap(() => timer(300, duration)))
-				.pipe(map((_, index) => (index < visualList.length ? visualList[index] : null)))
+				.pipe(switchMap(() => timer(300, duration).pipe(take(itemList.length + 1))))
+				.pipe(map((_, index) => (index < itemList.length ? itemList[index] : null)))
 		),
 		// takeWhile(v => v !== null),
+		tap(console.log),
+		distinctUntilChanged(),
 		shareReplay(1)
 	);
 

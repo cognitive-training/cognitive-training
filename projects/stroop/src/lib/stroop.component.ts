@@ -1,9 +1,20 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Item, StroopService } from './stroop.service';
-import { endWith, filter, finalize, mapTo, take, tap } from 'rxjs/operators';
+import {
+	endWith,
+	filter,
+	finalize,
+	map,
+	mapTo,
+	shareReplay,
+	switchMap,
+	take,
+	tap,
+	withLatestFrom
+} from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { StroopScoreService } from './stroop-score.service';
-import { combineLatest, Observable } from 'rxjs';
+import { combineLatest, Observable, timer } from 'rxjs';
 
 @Component({
 	selector: 'lib-stroop',
@@ -16,6 +27,7 @@ import { combineLatest, Observable } from 'rxjs';
 				<div class="h3">{{ score$ | async }}</div>
 			</div>
 		</mat-card>
+		<mat-progress-bar [value]="timeLeft$ | async" mode="determinate"></mat-progress-bar>
 		<div class="game-container flex justify-center items-center border-box" *ngIf="!(gameOver$ | async)">
 			<div *ngIf="currentItem$ | async as item; else defaultTemplate" class="flex justify-around flex-auto items-center">
 				<div
@@ -62,6 +74,20 @@ export class StroopComponent {
 	score$ = this.stroopService.score$;
 	error$ = this.stroopService.error$;
 	success$ = this.stroopService.success$;
+	timeLeft$ = this.stroopService.currentItem$.pipe(
+		withLatestFrom(this.stroopService.duration$),
+		map(([, duration]) => ({
+			duration,
+			refreshRate: Math.max(15, duration / Math.pow(2, duration / 1000) / 10)
+		})),
+		switchMap(({ duration, refreshRate }) =>
+			timer(0, refreshRate).pipe(
+				take(duration / refreshRate),
+				map(v => Math.ceil(100 - (v / (duration / refreshRate - 1)) * 100))
+			)
+		),
+		shareReplay(1)
+	);
 	gameOver$ = this.stroopService.gameOver$.pipe(
 		filter(Boolean),
 		tap(() => {

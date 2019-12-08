@@ -22,6 +22,7 @@ import { ActivatedRoute } from '@angular/router';
 					<br />
 					<span class="bold">Astuce</span>: Prends ton temps pour analyser chaque image.
 				</p>
+				<div class="center"><img src="assets/img/inhibition.png" alt="" class="col-6 mx-auto" /></div>
 			</div>
 			<div class="col-6 p1">
 				<h4 class="h3">Paramètre du jeu</h4>
