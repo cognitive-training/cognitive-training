@@ -51,7 +51,7 @@ export class MemoryGameService {
             flipped: false,
             resolved: false,
             name: fileName,
-            url: `assets/img/christmas/${fileName}`
+            url: `assets/img/theme/christmas/${fileName}`
           })
         ),
         toArray()
