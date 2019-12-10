@@ -96,7 +96,7 @@ export class InhibitionMenuComponent {
 		filter(Boolean),
 
 		map(v => +v),
-		startWith(this.lengthList[1])
+		startWith(this.lengthList[5])
 	);
 	duration$ = this.activatedRoute.queryParams.pipe(
 		pluck('duration'),

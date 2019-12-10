@@ -42,7 +42,7 @@ import { InhibitionScoreService } from './inhibition-score.service';
 		</div>
 		<ng-template #defaultTemplate>
 			<div class="img-container flex justify-center items-center border-box">
-				<div class="h1 center">
+				<div class="h1 center mat-elevation-z10 col-6 p2" style="background: white">
 					La cible, pour laquelle tu ne dois pas appuyer sur espace, est :
 					<br />
 					<br />

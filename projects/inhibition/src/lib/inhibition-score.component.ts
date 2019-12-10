@@ -7,7 +7,7 @@ import { combineLatest } from 'rxjs';
 	selector: 'lib-inhibition-score',
 	template: `
 		<div class="img-container flex justify-center items-center border-box height-fill">
-			<div class="h1 center p3 mat-elevation-z10" style="margin: auto;">
+			<div class="h1 center p3 mat-elevation-z10" style="margin: auto; background: white;">
 				<div class="py1">
 					<span style="font-size:2rem">⭐</span>
 					<span style="font-size:3rem">⭐</span>
@@ -29,7 +29,8 @@ import { combineLatest } from 'rxjs';
 				</button>
 			</div>
 		</div>
-	`
+	`,
+	styleUrls: [`./inhibition.component.scss`]
 })
 export class InhibitionScoreComponent {
 	name$ = this.activatedRoute.queryParams.pipe(pluck('name'));

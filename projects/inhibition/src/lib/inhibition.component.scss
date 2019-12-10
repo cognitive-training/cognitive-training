@@ -1,3 +1,9 @@
+:host {
+	background: url('src/assets/svg/christmas/landscape.svg');
+	background-size: cover;
+	display: block;
+	height: 100%;
+}
 .error {
 	animation: shake 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
 	transform: translate3d(0, 0, 0);
@@ -10,7 +16,7 @@
 }
 
 .img-container > img {
-	height: 70%;
+	height: 50%;
 	width: auto;
 }
 
@@ -84,7 +90,7 @@
 }
 .img-container.valid {
 	&:before {
-		transform: translateX(150vh) skewX(-15deg) ;
+		transform: translateX(150vh) skewX(-15deg);
 		opacity: 0.6;
 		transition: 0.7s;
 	}
