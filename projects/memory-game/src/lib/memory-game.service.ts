@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { imageList } from '../assets/img/christmas';
 import { BehaviorSubject, combineLatest, from, Observable } from 'rxjs';
 import {
   distinctUntilChanged,
@@ -18,6 +17,7 @@ import {
 } from 'rxjs/operators';
 import { shuffle } from 'lodash';
 import { ActivatedRoute } from '@angular/router';
+import { imageList } from 'src/assets/img/theme/christmas';
 
 export interface ICard {
   id?: number;

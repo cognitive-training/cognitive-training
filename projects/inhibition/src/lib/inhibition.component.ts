@@ -46,7 +46,7 @@ import { InhibitionScoreService } from './inhibition-score.service';
 					La cible, pour laquelle tu ne dois pas appuyer sur espace, est :
 					<br />
 					<br />
-					<img src="assets/img/christmas/{{ target$ | async }}" width="200px" alt="" />
+					<img src="assets/img/theme/christmas/{{ target$ | async }}" width="200px" alt="" />
 					<br />
 					<br />
 					Lorsque tu es prêt, appuies sur la touche espace pour commencer !

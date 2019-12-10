@@ -1,15 +1,15 @@
 import { Component } from '@angular/core';
 import { range } from 'lodash';
-import { imageList } from '../assets/img/christmas';
 import { filter, map, pluck, startWith } from 'rxjs/operators';
 import { combineLatest } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
+import { imageList } from 'src/assets/img/theme/christmas';
 
 @Component({
 	selector: 'lib-inhibition-menu',
 	template: `
 		<mat-card>
-			<div class="h1">Inhibition</div>
+			<div class="h1">Go/NoGo</div>
 		</mat-card>
 		<mat-divider></mat-divider>
 		<div class="flex">
@@ -22,7 +22,7 @@ import { ActivatedRoute } from '@angular/router';
 					<br />
 					<span class="bold">Astuce</span>: Prends ton temps pour analyser chaque image.
 				</p>
-				<div class="center"><img src="assets/img/inhibition.png" alt="" class="col-6 mx-auto" /></div>
+				<div class="center"><img src="assets/img/preview/inhibition.jpg" alt="" class="col-6 mx-auto" /></div>
 			</div>
 			<div class="col-6 p1">
 				<h4 class="h3">Paramètre du jeu</h4>
@@ -52,7 +52,7 @@ import { ActivatedRoute } from '@angular/router';
 						<mat-select [(value)]="config.target">
 							<mat-option *ngFor="let image of imageList" [value]="image">
 								<div class="flex items-center">
-									<img src="assets/img/christmas/{{ image }}" height="20px" class="mr1" /> {{ image }}
+									<img src="assets/img/theme/christmas/{{ image }}" height="20px" class="mr1" /> {{ image }}
 								</div>
 							</mat-option>
 						</mat-select>

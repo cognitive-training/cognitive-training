@@ -1,11 +1,11 @@
 :host {
   width: 90%;
   height: 90%;
-  margin-right: 3px;
   cursor: pointer;
   position: relative;
   perspective: 800px;
   display: block;
+  box-sizing: border-box;
 }
 .card {
   width: 100%;

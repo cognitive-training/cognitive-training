@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { imageList } from '../assets/img/christmas';
 import { combineLatest, from, fromEvent, merge, Observable, of, timer } from 'rxjs';
 import {
 	distinctUntilChanged,
@@ -16,6 +15,7 @@ import {
 } from 'rxjs/operators';
 import { sample, shuffle } from 'lodash';
 import { ActivatedRoute } from '@angular/router';
+import { imageList } from 'src/assets/img/theme/christmas';
 
 export interface IVisual {
 	name: string;

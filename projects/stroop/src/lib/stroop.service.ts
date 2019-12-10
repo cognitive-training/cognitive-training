@@ -106,7 +106,6 @@ export class StroopService {
 					map((_, index) => (index < itemList.length ? itemList[index] : null))
 				)
 		),
-		tap(console.log),
 		distinctUntilChanged(),
 		shareReplay(1)
 	);

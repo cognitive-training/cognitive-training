@@ -1,7 +1,7 @@
-import { Component, ElementRef, HostListener, OnDestroy, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
 import { ICard, MemoryGameService } from './memory-game.service';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { combineLatest } from 'rxjs';
+import { BehaviorSubject, combineLatest } from 'rxjs';
 import { distinctUntilChanged, map, pluck } from 'rxjs/operators';
 import { MatDialog } from '@angular/material';
 import { MemoryGameWinDialogComponent } from './win-dialog/memory-game-win-dialog.component';
@@ -26,15 +26,14 @@ const difficultyToCols = {
 			<div class="flex flex-auto justify-between items-center">
 				<div class="h3"><label class="xs-hide">Coups: </label>{{ nbTries$ | async }}</div>
 				<div class="h3" *ngIf="resolvedPairList$ | async as resolvedPairList">
-					<label class="xs-hide">Paires trouvées: </label>{{ resolvedPairList.length }} /
-					{{ difficulty$ | async }}
+					<label class="xs-hide">Paires trouvées: </label>{{ resolvedPairList.length }} / {{ difficulty$ | async }}
 				</div>
 				<button mat-raised-button color="primary" class="h3" [routerLink]="['..']">Retour</button>
 			</div>
 		</mat-card>
-		<div class="game-container p1 justify-center">
-			<div class="grid-container" [ngStyle]="gridStyle$ | async">
-				<div *ngFor="let card of cards$ | async; trackBy: trackByCards" class="grid-item">
+		<div class="height-fill flex items-center border-box">
+			<div class="grid-container border-box mx-auto" [ngStyle]="gridStyle$ | async">
+				<div *ngFor="let card of cards$ | async; trackBy: trackByCards" class="flex items-center justify-center">
 					<app-card [card]="card" (flipped)="flipCard($event)"></app-card>
 				</div>
 			</div>
@@ -44,28 +43,16 @@ const difficultyToCols = {
 	styles: [
 		`
 			:host {
-				height: 100%;
+				height: calc(100% - 68px);
 				display: block;
-			}
-			.grid-item {
-				height: 100%;
-				width: 100%;
-			}
-			.game-container {
-				height: 100%;
-				display: flex;
-				align-items: center;
-				box-sizing: border-box;
 			}
 			.grid-container {
 				display: grid;
-				justify-content: center;
-				margin: 0 auto;
 			}
 		`
 	]
 })
-export class MemoryGameComponent implements OnInit, OnDestroy {
+export class MemoryGameComponent implements OnInit {
 	cards$ = this.memoryGame.cards$;
 	resolvedPairList$ = this.memoryGame.resolvedPairList$;
 	nbTries$ = this.memoryGame.nbTries$;
@@ -76,14 +63,29 @@ export class MemoryGameComponent implements OnInit, OnDestroy {
 		distinctUntilChanged()
 	);
 
-	gridStyle$ = combineLatest([this.isXs$, this.difficulty$]).pipe(
-		map(([isXs, difficulty]) => {
-			const nbCols = difficultyToCols[difficulty] || 7;
-			// let nbRows = Math.ceil((difficulty * 2) / nbCols);
-			// if (isXs) {
-			// 	nbCols = Math.ceil(nbCols / 2);
-			// }
-			return { 'grid-template': `repeat(${nbCols}, minmax(0, 1fr)) / repeat(${nbCols}, minmax(0, 1fr))` };
+	resizeSubject$ = new BehaviorSubject(0);
+
+	gridStyle$ = combineLatest([this.isXs$, this.difficulty$, this.resizeSubject$]).pipe(
+		map(([isXs, difficulty, size]) => {
+			let nbCols = difficultyToCols[difficulty] || 7;
+			if (size <= 250) {
+				nbCols = Math.min(nbCols, 3);
+			} else if (size <= 400) {
+				nbCols = Math.min(nbCols, 4);
+			}
+			let nbRows = Math.ceil((difficulty * 2) / nbCols);
+
+			let height = nbCols === nbRows ? size : size * (nbRows / nbCols);
+
+			if (nbCols > nbRows && isXs) {
+				[nbCols, nbRows, size, height] = [nbRows, nbCols, height * 1.2, size * 1.2];
+			}
+
+			return {
+				'grid-template': `repeat(${nbRows}, minmax(0, 1fr)) / repeat(${nbCols}, minmax(0, 1fr))`,
+				width: `${size}px`,
+				height: `${height}px`
+			};
 		})
 	);
 
@@ -102,8 +104,6 @@ export class MemoryGameComponent implements OnInit, OnDestroy {
 		this.memoryGame.selectCard(card);
 	}
 
-	ngOnDestroy(): void {}
-
 	ngOnInit(): void {
 		this.memoryGame.win$.subscribe(([, nbTries]) => {
 			this.dialog.open(MemoryGameWinDialogComponent, {
@@ -115,8 +115,7 @@ export class MemoryGameComponent implements OnInit, OnDestroy {
 
 	@HostListener('window:resize', ['$event'])
 	onResize(event) {
-		const w = Math.min(event.target.innerWidth / 1.2, 800);
-		this.elRef.nativeElement.querySelector('.grid-container').style.width = `${w}px`;
-		this.elRef.nativeElement.querySelector('.grid-container').style.height = `${w}px`;
+		const v = event.target.innerWidth >= 600 ? event.target.innerWidth / 1.1 : event.target.innerWidth;
+		this.resizeSubject$.next(Math.min(v, 800));
 	}
 }

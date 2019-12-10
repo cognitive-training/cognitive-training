@@ -65,3 +65,7 @@ $dark-theme: mat-dark-theme($dark-primary, $dark-accent, $dark-warn);
 .cursor-pointer {
 	cursor: pointer;
 }
+
+.height-fill {
+	height: 100%;
+}

@@ -14,7 +14,7 @@ import { MAT_DIALOG_DATA } from '@angular/material';
       <button
         mat-raised-button
         mat-dialog-close
-        [routerLink]="['..']"
+        [routerLink]="['./memory']"
       >
         Rejouer
       </button>

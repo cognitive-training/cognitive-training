@@ -36,11 +36,6 @@
                 "glob": "**/*",
                 "input": "projects/stroop/src/assets",
                 "output": "./assets/"
-              },
-              {
-                "glob": "**/*",
-                "input": "projects/home/src/assets",
-                "output": "./assets/"
               }
             ],
             "styles": [
