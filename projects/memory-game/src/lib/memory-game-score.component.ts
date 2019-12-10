@@ -5,33 +5,19 @@ import { pluck } from 'rxjs/operators';
 @Component({
 	selector: 'lib-memory-game-score',
 	template: `
-		<mat-card>
-			<div class="flex flex-auto justify-between items-center">
-				<button
-					mat-raised-button
-					color="primary"
-					class="h3"
-					[routerLink]="['/stroop/']"
-					queryParamsHandling="preserve"
-				>
-					Retour
-				</button>
-			</div>
-		</mat-card>
-		<div class="img-container flex justify-center items-center border-box">
-			<div class="h1 center">
-				<h2>Bien joué {{ name$ | async }} !</h2>
-				<h3>Tu as terminé la séquence !</h3>
-				<p>Ton score est de {{ score$ | async }}/{{ length$ | async }}.</p>
+		<div class="img-container flex justify-center items-center border-box height-fill">
+			<div class="h1 center p3 mat-elevation-z10" style="margin: auto;">
+				<div class="py1">
+					<span style="font-size:2rem">⭐</span>
+					<span style="font-size:3rem">⭐</span>
+					<span style="font-size:2rem">⭐</span>
+				</div>
+				<h3>Bien joué {{ name$ | async }} !</h3>
+				<h4>Tu as trouvé les {{ difficulty$ | async }} paires</h4>
+				<p>en {{ score$ | async }} coups</p>
 				<br />
-				<button
-					mat-raised-button
-					color="primary"
-					class="h2"
-					[routerLink]="['/stroop/game']"
-					queryParamsHandling="preserve"
-				>
-					Rejouer
+				<button mat-raised-button color="primary" [routerLink]="['/memory/game']" queryParamsHandling="preserve">
+					<span class="h2 py1 block">Rejouer</span>
 				</button>
 			</div>
 		</div>
@@ -39,7 +25,7 @@ import { pluck } from 'rxjs/operators';
 })
 export class MemoryGameScoreComponent {
 	name$ = this.activatedRoute.queryParams.pipe(pluck('name'));
-	length$ = this.activatedRoute.queryParams.pipe(pluck('length'));
+	difficulty$ = this.activatedRoute.queryParams.pipe(pluck('difficulty'));
 	score$ = this.activatedRoute.queryParams.pipe(pluck('score'));
 
 	constructor(private activatedRoute: ActivatedRoute) {}

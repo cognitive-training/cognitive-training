@@ -1,26 +1,37 @@
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 
 @Component({
-  selector: 'lib-memory-game-win-dialog',
-  template: `
-    <h2 mat-dialog-title>Bravo !</h2>
-    <mat-dialog-content class="mat-typography">
-      <h3>Tu as gagné !</h3>
-      <p>Tu as trouvé les {{ data.difficulty$ | async }} paires en {{ data.nbTries }} coups !</p>
-    </mat-dialog-content>
-    <mat-dialog-actions align="end">
-      <button mat-raised-button mat-dialog-close>Ok</button>
-      <button
-        mat-raised-button
-        mat-dialog-close
-        [routerLink]="['./memory']"
-      >
-        Rejouer
-      </button>
-    </mat-dialog-actions>
-  `
+	selector: 'lib-memory-game-win-dialog',
+	template: `
+		<div class="img-container flex justify-center items-center">
+			<div class="h1 center" style="margin: auto;">
+				<div class="py1">
+					<span style="font-size:2rem">⭐</span>
+					<span style="font-size:3rem">⭐</span>
+					<span style="font-size:2rem">⭐</span>
+				</div>
+				<h3>Bien joué {{ data.name$ | async }} !</h3>
+				<h4>Tu as trouvé les {{ data.difficulty$ | async }} paires</h4>
+				<p>en {{ data.score }} coups</p>
+				<br />
+				<button
+					mat-raised-button
+					color="primary"
+					[routerLink]="['/memory']"
+					queryParamsHandling="preserve"
+					(click)="onClick()"
+				>
+					<span class="h2 py1 block">Rejouer</span>
+				</button>
+			</div>
+		</div>
+	`
 })
 export class MemoryGameWinDialogComponent {
-  constructor(@Inject(MAT_DIALOG_DATA) public data) {}
+	constructor(public dialogRef: MatDialogRef<MemoryGameWinDialogComponent>, @Inject(MAT_DIALOG_DATA) public data) {}
+
+	onClick(): void {
+		this.dialogRef.close();
+	}
 }

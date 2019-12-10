@@ -49,7 +49,7 @@ export class InhibitionService {
 
 	filenameToVisual = target => (fileName: string): IVisual => ({
 		name: fileName,
-		url: `assets/img/preview/christmas/${fileName}`,
+		url: `assets/img/theme/christmas/${fileName}`,
 		target: fileName === target
 	});
 

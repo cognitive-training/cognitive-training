@@ -48,6 +48,12 @@
       ],
       "home/*": [
         "dist/home/*"
+      ],
+      "shared": [
+        "dist/shared"
+      ],
+      "shared/*": [
+        "dist/shared/*"
       ]
     }
   },

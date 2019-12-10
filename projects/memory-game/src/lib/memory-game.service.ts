@@ -29,6 +29,10 @@ export interface ICard {
 
 @Injectable()
 export class MemoryGameService {
+  name$ = this.activatedRoute.queryParams.pipe(
+    pluck('name'),
+    distinctUntilChanged()
+  );
   difficulty$ = this.activatedRoute.queryParams.pipe(
     pluck('difficulty'),
     distinctUntilChanged()

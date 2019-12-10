@@ -107,15 +107,22 @@ export class MemoryGameComponent implements OnInit {
 	ngOnInit(): void {
 		this.memoryGame.win$.subscribe(([, nbTries]) => {
 			this.dialog.open(MemoryGameWinDialogComponent, {
-				data: { difficulty$: this.memoryGame.difficulty$, nbTries }
+				data: {
+					difficulty$: this.memoryGame.difficulty$,
+					score: nbTries,
+					name$: this.memoryGame.name$,
+					timestamp: Date.now()
+				}
 			});
 		});
-		this.onResize({ target: { innerWidth: this.elRef.nativeElement.clientWidth } });
+		this.onResize({
+			target: { innerWidth: this.elRef.nativeElement.clientWidth, innerHeight: this.elRef.nativeElement.clientHeight }
+		});
 	}
 
 	@HostListener('window:resize', ['$event'])
 	onResize(event) {
 		const v = event.target.innerWidth >= 600 ? event.target.innerWidth / 1.1 : event.target.innerWidth;
-		this.resizeSubject$.next(Math.min(v, 800));
+		this.resizeSubject$.next(Math.min(v, Math.min(event.target.innerHeight - 124, 800)));
 	}
 }

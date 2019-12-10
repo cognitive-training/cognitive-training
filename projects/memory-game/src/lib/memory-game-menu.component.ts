@@ -25,7 +25,7 @@ import { ActivatedRoute } from '@angular/router';
 					<span class="bold">Astuce</span>: Mémorise l'emplacement des différentes images pour éviter de les retourner
 					inutilement.
 				</p>
-				<div class="center"><img src="assets/img/preview/memory.jpg" alt="" class="col-8 mx-auto" /></div>
+				<div class="center"><img src="assets/img/preview/memory.jpg" alt="" class="col-6 mx-auto" /></div>
 			</div>
 			<div class="col-6 p1">
 				<h4 class="h3">Paramètre du jeu</h4>
@@ -71,6 +71,7 @@ export class MemoryGameMenuComponent {
 	difficulty$ = this.activatedRoute.queryParams.pipe(
 		pluck('difficulty'),
 		filter(Boolean),
+		map(v => +v),
 		startWith(this.difficultyList[7])
 	);
 
